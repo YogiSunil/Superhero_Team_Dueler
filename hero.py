@@ -1,32 +1,65 @@
 from ability import Ability
 from weapon import Weapon
+from armor import Armor
 
 class Hero:
-    def __init__(self, name, health=100):
+    def __init__(self, name, starting_health=100):
+        '''Initialize the hero with a name and starting health.'''
         self.name = name
-        self.health = health
-        self.starting_health = health  # To keep track of original health
-        self.deaths = 0
+        self.starting_health = starting_health
+        self.current_health = starting_health
+        self.abilities = []
+        self.armors = []
         self.kills = 0
-        # Add any other attributes you already have
-        # ...
+        self.deaths = 0
 
-    def add_kill(self, num_kills):
-        ''' Update self.kills by num_kills amount '''
-        self.kills += num_kills
+    def add_ability(self, ability):
+        '''Add an ability to the hero.'''
+        self.abilities.append(ability)
 
-    def add_death(self, num_deaths):
-        ''' Update deaths with num_deaths '''
-        self.deaths += num_deaths
+    def add_weapon(self, weapon):
+        '''Add a weapon to the hero.'''
+        self.add_ability(weapon)
+
+    def add_armor(self, armor):
+        '''Add armor to the hero.'''
+        self.armors.append(armor)
+
+    def attack(self):
+        '''Calculate the total attack damage from all abilities.'''
+        total_damage = 0
+        for ability in self.abilities:
+            total_damage += ability.attack()
+        return total_damage
+
+    def defend(self):
+        '''Calculate the total block value from all armors.'''
+        total_block = 0
+        for armor in self.armors:
+            total_block += armor.block()
+        return total_block
+
+    def take_damage(self, damage):
+        '''Update the hero's health to reflect the damage taken.'''
+        self.current_health -= damage
+
+    def is_alive(self):
+        '''Return True if the hero is alive, otherwise False.'''
+        return self.current_health > 0
 
     def fight(self, opponent):
-        '''Simulate fight and update stats'''
-        if self.health > opponent.health:
-            opponent.add_death(1)  # Opponent dies
-            self.add_kill(1)  # Hero gets a kill
-        elif self.health < opponent.health:
-            self.add_death(1)  # Hero dies
-            opponent.add_kill(1)  # Opponent gets a kill
+        '''Engage in a fight between this hero and an opponent.'''
+        while self.is_alive() and opponent.is_alive():
+            damage_to_opponent = self.attack() - opponent.defend()
+            damage_to_self = opponent.attack() - self.defend()
+            if damage_to_opponent > 0:
+                opponent.take_damage(damage_to_opponent)
+            if damage_to_self > 0:
+                self.take_damage(damage_to_self)
+
+        if self.is_alive():
+            self.kills += 1
+            opponent.deaths += 1
         else:
-            # If health is equal, nobody dies
-            pass
+            opponent.kills += 1
+            self.deaths += 1
