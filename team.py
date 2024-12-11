@@ -1,27 +1,24 @@
-from hero import Hero
-
 class Team:
     def __init__(self, name):
+        ''' Initialize your team with its team name and an empty list of heroes '''
         self.name = name
-        self.heroes = []
+        self.heroes = list()
 
     def add_hero(self, hero):
+        '''Add Hero object to self.heroes.'''
         self.heroes.append(hero)
 
-    def attack(self, opponent):
-        total_damage = sum([hero.attack() for hero in self.heroes if hero.is_alive])
-        opponent.receive_damage(total_damage)
-
-    def receive_damage(self, damage):
+    def remove_hero(self, name):
+        '''Remove hero from heroes list. If Hero isn't found return 0.'''
+        foundHero = False
         for hero in self.heroes:
-            if hero.is_alive:
-                hero.receive_damage(damage)
+            if hero.name == name:
+                self.heroes.remove(hero)
+                foundHero = True
+        if not foundHero:
+            return 0
 
-    def revive_heroes(self):
+    def view_all_heroes(self):
+        '''Prints out all heroes to the console.'''
         for hero in self.heroes:
-            hero.revive()
-
-    def stats(self):
-        total_kills = sum([hero.kills for hero in self.heroes])
-        total_deaths = sum([hero.deaths for hero in self.heroes])
-        print(f"Total Kills: {total_kills}, Total Deaths: {total_deaths}")
+            print(hero.name)
