@@ -1,25 +1,34 @@
-from ability import Ability
-from weapon import Weapon
-from armor import Armor
+# hero.py
+import random
 
 class Hero:
-    def __init__(self, name):
+    def __init__(self, name, starting_health=100):
+        '''Instance properties:
+          name: String
+          starting_health: Integer
+          current_health: Integer
+        '''
         self.name = name
-        self.abilities = []
-        self.weapons = []
-        self.armors = []
+        self.starting_health = starting_health
+        self.current_health = starting_health
 
-    def add_ability(self, ability):
-        self.abilities.append(ability)
+    def fight(self, opponent):
+        ''' Current Hero will take turns fighting the opponent hero passed in.'''
+        
+        # Calculate total health to determine the chance of winning
+        total_health = self.starting_health + opponent.starting_health
+        self_win_chance = self.starting_health / total_health
+        opponent_win_chance = opponent.starting_health / total_health
+        
+        # Randomly decide the winner based on health
+        if random.random() < self_win_chance:
+            print(f"{self.name} defeats {opponent.name}!")
+        else:
+            print(f"{opponent.name} defeats {self.name}!")
 
-    def add_weapon(self, weapon_name, damage):
-        self.weapons.append({"name": weapon_name, "damage": damage})
+if __name__ == "__main__":
+    # If you run this file from the terminal, this block is executed.
+    hero1 = Hero("Wonder Woman", 300)
+    hero2 = Hero("Dumbledore", 250)
 
-    def add_armor(self, armor_name, defense_value):
-        self.armors.append({"name": armor_name, "defense_value": defense_value})
-
-    def show(self):
-        print(f"Hero Name: {self.name}")
-        print("Abilities: ", self.abilities)
-        print("Weapons: ", self.weapons)
-        print("Armors: ", self.armors)
+    hero1.fight(hero2)
